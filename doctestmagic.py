@@ -85,6 +85,16 @@ class DoctestMagic(Magics):
     def doctest_object(self, line):
         """
         Run doctest of given objects.
+
+        Example::
+
+          %doctest some_object other_object  # run doctest for several objects
+          %doctest -v some_object            # verbose ouput
+          %doctest -x some_object            # debug doctest
+
+        Use the cell magic version of this magic command (``%%doctest``)
+        to write doctest directly in IPython shell.
+
         """
         args = parse_argstring(self.doctest_object, line)
         objects = map(self.shell.ev, args.object)
