@@ -50,3 +50,13 @@ class DoctestMagic(Magics):
         obj.__doc__ = cell
         doctest.run_docstring_examples(
             obj, globs, verbose=args.verbose)
+
+
+def load_ipython_extension(ip):
+    """Load the extension in IPython."""
+    global _loaded
+    if not _loaded:
+        ip.register_magics(DoctestMagic)
+        _loaded = True
+
+_loaded = False
