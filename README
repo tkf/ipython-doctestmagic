@@ -1,0 +1,24 @@
+%doctest [-n NAME] [-v] [-x] object [object ...]
+
+Run doctest of given objects.
+
+Example::
+
+  %doctest some_object other_object  # run doctest for several objects
+  %doctest -v some_object            # verbose ouput
+  %doctest -x some_object            # debug doctest
+
+Use the cell magic version of this magic command (``%%doctest``)
+to write doctest directly in IPython shell.
+
+positional arguments:
+  object                Doctest is ran against docstrings of this object.
+
+optional arguments:
+  -n NAME, --name NAME  See :func:`doctest.run_docstring_examples`.
+  -v, --verbose         See :func:`doctest.run_docstring_examples`.
+  -x, --stop            Stop running tests after the first error or failure.
+                        When this option is specified, the error is recorded
+                        in IPython shell so that you can debug the error by
+                        turning on pdb flag before doctest (see ``%pdb``) or
+                        use ``%debug`` magic command afterward.
