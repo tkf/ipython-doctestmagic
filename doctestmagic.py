@@ -28,6 +28,11 @@ def common_doctest_arguments(func):
 @magics_class
 class DoctestMagic(Magics):
 
+    def _run_docstring_examples(self, obj, args):
+        globs = self.shell.user_ns
+        doctest.run_docstring_examples(
+            obj, globs, verbose=args.verbose, name=args.name)
+
     @magic_arguments()
     @argument(
         'object', nargs='+',
@@ -40,12 +45,10 @@ class DoctestMagic(Magics):
         Run doctest of given object.
         """
         args = parse_argstring(self.doctest_object, line)
-        globs = self.shell.user_ns
         objects = map(self.shell.ev, args.object)
 
         for obj in objects:
-            doctest.run_docstring_examples(
-                obj, globs, verbose=args.verbose)
+            self._run_docstring_examples(obj, args)
 
     @magic_arguments()
     @common_doctest_arguments
@@ -55,11 +58,9 @@ class DoctestMagic(Magics):
         Run doctest written in a cell.
         """
         args = parse_argstring(self.doctest_cell, line)
-        globs = self.shell.user_ns
         obj = DummyForDoctest()
         obj.__doc__ = cell
-        doctest.run_docstring_examples(
-            obj, globs, verbose=args.verbose)
+        self._run_docstring_examples(obj, args)
 
 
 def load_ipython_extension(ip):
