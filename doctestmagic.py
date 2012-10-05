@@ -1,4 +1,5 @@
 import doctest
+from contextlib import contextmanager
 
 from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
 from IPython.core.magic_arguments import (argument, magic_arguments,
@@ -29,9 +30,27 @@ def common_doctest_arguments(func):
 class DoctestMagic(Magics):
 
     def _run_docstring_examples(self, obj, args):
+        verbose = args.verbose
+        name = args.name
+        optionflags = 0
         globs = self.shell.user_ns
-        doctest.run_docstring_examples(
-            obj, globs, verbose=args.verbose, name=args.name)
+        finder = doctest.DocTestFinder(verbose=verbose, recurse=False)
+        runner = doctest.DocTestRunner(verbose=verbose,
+                                       optionflags=optionflags)
+        for test in finder.find(obj, name, globs=globs):
+            runner.run(test, compileflags=None)
+            self._test_counter += 1
+
+    @contextmanager
+    def _doctest_report(self, num_objects=None):
+        self._test_counter = 0
+        yield
+        if num_objects is None:
+            in_objects_message = ''
+        else:
+            in_objects_message = ' in {0} objects'.format(num_objects)
+        print("Ran {0} doctests{1}.".format(
+            self._test_counter + 1, in_objects_message))
 
     @magic_arguments()
     @argument(
@@ -42,13 +61,14 @@ class DoctestMagic(Magics):
     @line_magic('doctest')
     def doctest_object(self, line):
         """
-        Run doctest of given object.
+        Run doctest of given objects.
         """
         args = parse_argstring(self.doctest_object, line)
         objects = map(self.shell.ev, args.object)
 
-        for obj in objects:
-            self._run_docstring_examples(obj, args)
+        with self._doctest_report(len(objects)):
+            for obj in objects:
+                self._run_docstring_examples(obj, args)
 
     @magic_arguments()
     @common_doctest_arguments
@@ -60,7 +80,8 @@ class DoctestMagic(Magics):
         args = parse_argstring(self.doctest_cell, line)
         obj = DummyForDoctest()
         obj.__doc__ = cell
-        self._run_docstring_examples(obj, args)
+        with self._doctest_report():
+            self._run_docstring_examples(obj, args)
 
 
 def load_ipython_extension(ip):
