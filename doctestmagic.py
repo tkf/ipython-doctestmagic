@@ -35,8 +35,8 @@ class DoctestMagic(Magics):
         optionflags = 0
         globs = self.shell.user_ns
         finder = doctest.DocTestFinder(verbose=verbose, recurse=False)
-        runner = doctest.DocTestRunner(verbose=verbose,
-                                       optionflags=optionflags)
+        runner = doctest.DebugRunner(verbose=verbose,
+                                     optionflags=optionflags)
         for test in finder.find(obj, name, globs=globs):
             runner.run(test, compileflags=None)
             self._test_tries += runner.tries
@@ -46,7 +46,16 @@ class DoctestMagic(Magics):
     def _doctest_report(self, num_objects=None):
         self._test_tries = 0
         self._test_failures = 0
-        yield
+        try:
+            yield
+            self._print_report(num_objects)
+        except doctest.UnexpectedException as e:
+            print("Unexpected exception while running doctests!")
+            self.shell.InteractiveTB(*e.exc_info)
+            # To make %debug magic work
+            self.shell.InteractiveTB.tb = e.exc_info[2]
+
+    def _print_report(self, num_objects=None):
         if num_objects is None:
             in_objects_message = ''
         else:
