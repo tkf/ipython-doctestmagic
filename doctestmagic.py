@@ -9,22 +9,31 @@ class DummyForDoctest(object):
     pass
 
 
+def common_doctest_arguments(func):
+    commons = [
+        argument(
+            '-v', '--verbose', default=False, action='store_true',
+            help='See :func:`doctest.run_docstring_examples`.',
+        ),
+        argument(
+            '-n', '--name', default='NoName',
+            help='See :func:`doctest.run_docstring_examples`.',
+        )
+    ]
+    for c in commons:
+        func = c(func)
+    return func
+
+
 @magics_class
 class DoctestMagic(Magics):
 
     @magic_arguments()
     @argument(
-        '-f', '--verbose', default=False, action='store_true',
-        help='See :func:`doctest.run_docstring_examples`.',
-    )
-    @argument(
-        '-n', '--name', default='NoName',
-        help='See :func:`doctest.run_docstring_examples`.',
-    )
-    @argument(
         'object', nargs='+',
         help='Doctest is ran against docstrings of this object.',
     )
+    @common_doctest_arguments
     @line_magic('doctest')
     def doctest_object(self, line):
         """
@@ -39,6 +48,7 @@ class DoctestMagic(Magics):
                 obj, globs, verbose=args.verbose)
 
     @magic_arguments()
+    @common_doctest_arguments
     @cell_magic('doctest')
     def doctest_cell(self, line, cell):
         """
