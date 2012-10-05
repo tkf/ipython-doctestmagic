@@ -39,18 +39,20 @@ class DoctestMagic(Magics):
                                        optionflags=optionflags)
         for test in finder.find(obj, name, globs=globs):
             runner.run(test, compileflags=None)
-            self._test_counter += 1
+            self._test_tries += runner.tries
+            self._test_failures += runner.failures
 
     @contextmanager
     def _doctest_report(self, num_objects=None):
-        self._test_counter = 0
+        self._test_tries = 0
+        self._test_failures = 0
         yield
         if num_objects is None:
             in_objects_message = ''
         else:
             in_objects_message = ' in {0} objects'.format(num_objects)
-        print("Ran {0} doctests{1}.".format(
-            self._test_counter + 1, in_objects_message))
+        print("Ran {0} tests{1}, {2} tests failed.".format(
+            self._test_tries, in_objects_message, self._test_failures))
 
     @magic_arguments()
     @argument(
