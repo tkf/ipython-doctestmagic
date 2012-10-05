@@ -13,13 +13,23 @@ class DummyForDoctest(object):
 def common_doctest_arguments(func):
     commons = [
         argument(
+            '-x', '--stop', default=False, action='store_true',
+            help="""
+            Stop running tests after the first error or failure.
+            When this option is specified, the error is recorded
+            in IPython shell so that you can debug the error by
+            turning on pdb flag before doctest (see ``%%pdb``) or
+            use ``%%debug`` magic command afterward.
+            """,
+        ),
+        argument(
             '-v', '--verbose', default=False, action='store_true',
             help='See :func:`doctest.run_docstring_examples`.',
         ),
         argument(
             '-n', '--name', default='NoName',
             help='See :func:`doctest.run_docstring_examples`.',
-        )
+        ),
     ]
     for c in commons:
         func = c(func)
@@ -34,9 +44,11 @@ class DoctestMagic(Magics):
         name = args.name
         optionflags = 0
         globs = self.shell.user_ns
-        finder = doctest.DocTestFinder(verbose=verbose, recurse=False)
-        runner = doctest.DebugRunner(verbose=verbose,
-                                     optionflags=optionflags)
+        FinderClass = doctest.DocTestFinder
+        RunnerClass = doctest.DebugRunner if args.stop else \
+                      doctest.DocTestRunner
+        finder = FinderClass(verbose=verbose, recurse=False)
+        runner = RunnerClass(verbose=verbose, optionflags=optionflags)
         for test in finder.find(obj, name, globs=globs):
             runner.run(test, compileflags=None)
             self._test_tries += runner.tries
