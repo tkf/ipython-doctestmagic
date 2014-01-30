@@ -19,8 +19,9 @@ optional arguments:
   -f, --file                     The object to be tested is a (path to a) file
   -o OPTION, --options OPTION    Pass on options to doctest
   -v, --verbose                  See :func:`doctest.run_docstring_examples`.
-  -x, --stop                     Stop running tests after the first error or failure.
-                                 When this option is specified, the error is recorded
-                                 in IPython shell so that you can debug the error by
-                                 turning on pdb flag before doctest (see ``%pdb``) or
-                                 use ``%debug`` magic command afterward.
+  -x, --stop                     Stop testing after the first error or failure.
+                                 When this option is used, the error is stored
+                                 in IPython shell so that you can debug it by
+                                 turning on pdb flag before doctest (see
+								 ``%pdb``) or use ``%debug`` magic command
+								 afterward.
