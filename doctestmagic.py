@@ -74,11 +74,10 @@ def common_doctest_arguments(func):
             help='The object to be tested is a file'
         ),
         argument(
-            '-o', '--optionflags', default=0,
+            '-o', '--options', default=0,
             help="""
-            Use these doctest optionflags
-            For example:
-                %%doctest --optionflags=doctest.ELLIPSIS object
+            Use these doctest options, e.g.
+                %%doctest --options=doctest.ELLIPSIS object
             """
         ),
     ]
@@ -99,9 +98,9 @@ class DoctestMagic(Magics):
         verbose = args.verbose
         name = args.name
         try:
-            optionflags = eval(args.optionflags)
+            optionflags = eval(args.options)
         except AttributeError, e:
-            if args.optionflags.startswith('doctest.'):
+            if args.options.startswith('doctest.'):
                 raise AttributeError(str(e).replace(
                     "'module' object", "doctest module"))
         globs = self.shell.user_ns
