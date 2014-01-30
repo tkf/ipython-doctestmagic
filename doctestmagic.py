@@ -94,7 +94,6 @@ class DoctestMagic(Magics):
         globs = self.shell.user_ns
         RunnerClass = doctest.DebugRunner if args.stop else \
                       doctest.DocTestRunner
-        finder = FinderClass(verbose=verbose, recurse=False)
         runner = RunnerClass(verbose=verbose, optionflags=optionflags)
         if args.file:
             text, filename = _load_testfile(obj)
