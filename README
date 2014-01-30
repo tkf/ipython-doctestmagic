@@ -16,6 +16,7 @@ positional arguments:
 
 optional arguments:
   -n NAME, --name NAME  See :func:`doctest.run_docstring_examples`.
+  -f, --file            The object to be tested is a (path to a) file
   -v, --verbose         See :func:`doctest.run_docstring_examples`.
   -x, --stop            Stop running tests after the first error or failure.
                         When this option is specified, the error is recorded
