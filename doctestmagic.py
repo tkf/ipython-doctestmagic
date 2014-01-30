@@ -72,7 +72,15 @@ def common_doctest_arguments(func):
         argument(
             '-f', '--file', default='', action='store_true',
             help='The object to be tested is a file'
-        )
+        ),
+        argument(
+            '-o', '--optionflags', default=0,
+            help="""
+            Use these doctest optionflags
+            For example:
+                %%doctest --optionflags=doctest.ELLIPSIS object
+            """
+        ),
     ]
     for c in commons:
         func = c(func)
@@ -90,7 +98,12 @@ class DoctestMagic(Magics):
     def _run_docstring_examples(self, obj, args):
         verbose = args.verbose
         name = args.name
-        optionflags = 0
+        try:
+            optionflags = eval(args.optionflags)
+        except AttributeError, e:
+            if args.optionflags.startswith('doctest.'):
+                raise AttributeError(str(e).replace(
+                    "'module' object", "doctest module"))
         globs = self.shell.user_ns
         RunnerClass = doctest.DebugRunner if args.stop else \
                       doctest.DocTestRunner
