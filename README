@@ -23,5 +23,5 @@ optional arguments:
                                  When this option is used, the error is stored
                                  in IPython shell so that you can debug it by
                                  turning on pdb flag before doctest (see
-								 ``%pdb``) or use ``%debug`` magic command
-								 afterward.
+                                 ``%pdb``) or use ``%debug`` magic command
+                                 afterward.
