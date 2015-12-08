@@ -98,8 +98,8 @@ class DoctestMagic(Magics):
         verbose = args.verbose
         name = args.name
         try:
-            optionflags = eval(args.options)
-        except AttributeError, e:
+            optionflags = eval(str(args.options))
+        except AttributeError as e:
             if args.options.startswith('doctest.'):
                 raise AttributeError(str(e).replace(
                     "'module' object", "doctest module"))
@@ -166,7 +166,7 @@ class DoctestMagic(Magics):
 
         """
         args = parse_argstring(self.doctest_object, line)
-        objects = map(self.shell.ev, args.object)
+        objects = list(map(self.shell.ev, args.object))
 
         with self._doctest_report(len(objects)):
             for obj in objects:
